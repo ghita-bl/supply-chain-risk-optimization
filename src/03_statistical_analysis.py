@@ -14,11 +14,17 @@ import sys
 import pandas as pd
 from scipy.stats import chi2_contingency
 import statsmodels.formula.api as smf
+from scipy.stats import ttest_ind
+
 
 sys.path.insert(0, os.path.dirname(__file__))
 from db import get_engine
 
 
+ # df["actually_late"] = df["late_delivery_risk"]  despite the column name, this is the observed 0/1 outcome, not a risk score !!!!!!!!!!!!
+
+
+#late delivery x region x shipping mode
 def load_orders(engine):
     query = """
         SELECT v.late_delivery_risk, v.order_id,
@@ -47,6 +53,13 @@ def chi_square_test(df, col, label="late_delivery_risk"):
     print(f"{col}: chi2={chi2:.2f}, dof={dof}, p-value={p:.4g}")
     return chi2, p
 
+def sales_ttest(df):
+    late = df[df["late_delivery_risk"] == 1]["total_sales"].dropna()
+    on_time = df[df["late_delivery_risk"] == 0]["total_sales"].dropna()
+    t_stat, p_value = ttest_ind(late, on_time, equal_var=False)  # Welch's t-test
+    print(f"total_sales: t={t_stat:.2f}, p-value={p_value:.4g}")
+    print(f"  mean sales (late): {late.mean():.2f}, mean sales (on-time): {on_time.mean():.2f}")
+
 
 def logistic_regression(df):
     """
@@ -72,6 +85,10 @@ if __name__ == "__main__":
     print("--- Chi-square tests: association with late_delivery_risk ---")
     for col in ["shipping_mode", "order_region"]:
         chi_square_test(df, col)
+
+
+    print("\n--- Independent t-test two sample for order size x late delivery ---")
+    sales_ttest(df)    
 
     print("\n--- Logistic regression ---")
     logistic_regression(df)
