@@ -3,7 +3,7 @@
 -- built from it. Keeping the staging table lets you re-derive the
 -- model without re-parsing the raw CSV every time.
 
-DROP TABLE IF EXISTS stg_orders;
+DROP TABLE IF EXISTS stg_orders CASCADE;
 CREATE TABLE stg_orders (
     row_id                    INT,
     order_id                  INT,
@@ -16,16 +16,21 @@ CREATE TABLE stg_orders (
     late_delivery_risk        INT,
     delivery_status           TEXT,
     order_status              TEXT,
+    payment_type              TEXT,
+    
 
     -- customer
     customer_id               INT,
+    order_customer_id           INT,
     customer_segment          TEXT,
     customer_city             TEXT,
     customer_state            TEXT,
     customer_country          TEXT,
+   
 
     -- product
     product_card_id           INT,
+    product_name              TEXT,
     product_price             NUMERIC,
     product_status            INT,
     category_id               INT,
@@ -53,7 +58,7 @@ CREATE TABLE stg_orders (
     benefit_per_order          NUMERIC
 );
 
-DROP TABLE IF EXISTS dim_customer;
+DROP TABLE IF EXISTS dim_customer CASCADE;
 CREATE TABLE dim_customer(
     customer_id  INT PRIMARY KEY,
     customer_segment TEXT,
@@ -62,7 +67,7 @@ CREATE TABLE dim_customer(
     customer_country TEXT
 );
 
-DROP TABLE IF EXISTS dim_product;
+DROP TABLE IF EXISTS dim_product CASCADE;
 CREATE TABLE dim_product(
     product_card_id INT PRIMARY KEY,
     product_price NUMERIC,
@@ -74,7 +79,7 @@ CREATE TABLE dim_product(
     department_name TEXT
 );
 
-DROP TABLE IF EXISTS dim_geography;
+DROP TABLE IF EXISTS dim_geography CASCADE;
 CREATE TABLE dim_geography(
     geography_id SERIAL PRIMARY KEY,
     order_city TEXT,
@@ -85,14 +90,14 @@ CREATE TABLE dim_geography(
     UNIQUE (order_city, order_state, order_country, order_region, market)
 );
 
-DROP TABLE IF EXISTS dim_shipping_mode;
+DROP TABLE IF EXISTS dim_shipping_mode CASCADE;
 CREATE TABLE dim_shipping_mode(
     shipping_mode_id SERIAL PRIMARY KEY,
     shipping_mode TEXT UNIQUE
 );
 
 
-DROP TABLE IF EXISTS dim_date;
+DROP TABLE IF EXISTS dim_date CASCADE;
 CREATE TABLE dim_date(
     date_id SERIAL PRIMARY KEY,
     full_date DATE UNIQUE,
@@ -102,7 +107,7 @@ CREATE TABLE dim_date(
     weekday TEXT
 );
 
-DROP TABLE IF EXISTS fact_order_items;
+DROP TABLE IF EXISTS fact_order_items CASCADE;
 CREATE TABLE fact_order_items(
     order_item_id           INT PRIMARY KEY,
     order_id                INT,
@@ -132,7 +137,8 @@ CREATE TABLE fact_order_items(
     order_item_profit_ratio NUMERIC,
     order_item_total        NUMERIC,
     order_profit_per_order  NUMERIC,
-    benefit_per_order       NUMERIC
+    benefit_per_order       NUMERIC,
+    payment_type TEXT
 );
 
 CREATE INDEX idx_fact_customer ON fact_order_items(customer_id);
