@@ -60,6 +60,6 @@ supply-chain-case/
 - [x] Exploratory SQL done
 - [x] Statistical analysis notebook
 - [x] Classifier trained + evaluated
-- [ ] Optimization module
-- [ ] Dashboard
+- [x] Optimization module
+- [x] Dashboard
 - [ ] Client deck
