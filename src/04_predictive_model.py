@@ -70,6 +70,26 @@ def run_version(name,df, categorical,numeric):
     yh_proba=xgb_pipe.predict_proba(X_test)[:,1]
     evaluate(f"{name}- XGBoost", y_test, y_pred, y_proba )
 
+   
+    # --- persist the Version A model for the dashboard's Predict tab ---
+def save_model_for_dashboard(df):
+    import joblib
+    categorical = ["shipping_mode", "order_region"]
+    numeric = ["total_sales"]
+    X = df[categorical + numeric]
+    y = df[LABEL]
+    pipe = Pipeline([
+        ("prep", build_preprocessor(categorical, numeric)),
+        ("clf", XGBClassifier(
+            n_estimators=200, max_depth=4, learning_rate=0.1,
+            eval_metric="logloss", random_state=42,
+        )),
+    ])
+    pipe.fit(X, y)
+    out_path = os.path.join(os.path.dirname(__file__), "..", "dashboard", "model.joblib")
+    joblib.dump(pipe, out_path)
+    print(f"Saved dashboard model to {out_path}")
+
 def main():
     engine = get_engine()
     df = load_data(engine)
@@ -94,7 +114,10 @@ def main():
         categorical=["shipping_mode", "order_region"],
         numeric=["total_sales", "days_for_shipment_sched"],
     )
+    save_model_for_dashboard(df) 
+
 
 
 if __name__ == "__main__":
-    main()    
+    main()   
+    
