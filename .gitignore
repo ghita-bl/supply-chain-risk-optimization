@@ -7,3 +7,4 @@ data/processed/*.csv
 .env
 kaggle.json
 .ipynb_checkpoints/
+dashboard/model.joblib
