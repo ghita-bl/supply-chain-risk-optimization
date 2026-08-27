@@ -62,4 +62,4 @@ supply-chain-case/
 - [x] Classifier trained + evaluated
 - [x] Optimization module
 - [x] Dashboard
-- [ ] Client deck
+- [x] Client deck
