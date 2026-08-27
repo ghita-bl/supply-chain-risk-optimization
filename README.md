@@ -55,11 +55,11 @@ supply-chain-case/
 
 ## Status
 - [x] Repo scaffolded
-- [ ] Data downloaded
-- [ ] Schema created, data loaded into Postgres
-- [ ] Exploratory SQL done
-- [ ] Statistical analysis notebook
-- [ ] Classifier trained + evaluated
+- [x] Data downloaded
+- [x] Schema created, data loaded into Postgres
+- [x] Exploratory SQL done
+- [x] Statistical analysis notebook
+- [x] Classifier trained + evaluated
 - [ ] Optimization module
 - [ ] Dashboard
 - [ ] Client deck
