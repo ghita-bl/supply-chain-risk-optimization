@@ -31,3 +31,21 @@ FROM (
 ) order_days
 JOIN dim_shipping_mode sm ON sm.shipping_mode_id = order_days.shipping_mode_id
 GROUP BY sm.shipping_mode;
+
+
+SELECT
+    g.order_region,
+    sm.shipping_mode,
+    COUNT(*) AS n_orders,
+    ROUND(AVG(v.late_delivery_risk)::numeric, 3) AS late_rate
+FROM v_orders v
+JOIN dim_geography g      ON g.geography_id = v.geography_id
+JOIN dim_shipping_mode sm ON sm.shipping_mode_id = v.shipping_mode_id
+WHERE g.order_region IN (
+    'Canada', 'Central Africa', 'Central Asia', 'Eastern Europe', 'South of  USA '
+)
+GROUP BY g.order_region, sm.shipping_mode
+ORDER BY g.order_region, sm.shipping_mode;
+
+--Same Day is used rarely enough everywhere 
+--that we don't have strong statistical confidence in its true late rate for any single region — the current apparent regional advantages are more likely small-sample variation than a genuine pattern.

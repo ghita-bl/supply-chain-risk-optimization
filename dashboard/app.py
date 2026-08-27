@@ -2,7 +2,8 @@
 Streamlit MVP: Diagnose / Predict / Optimize.
 
 Run with:
-    streamlit run dashboard/app.py
+
+      run dashboard/app.py
 """
 import os
 import sys
